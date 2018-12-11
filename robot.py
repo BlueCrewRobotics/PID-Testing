@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import wpilib
+import wpilib.drive
 from robotpy_ext.common_drivers.navx import AHRS
 
 class MyRobot(wpilib.SampleRobot):
@@ -42,23 +43,31 @@ class MyRobot(wpilib.SampleRobot):
         kF = 0.00
     else:
         # These PID parameters are used on a real robot
-        kP = 0.03
-        kI = 0.03
+        kP = 0.30
+        kI = 0.00
         kD = 0.00
         kF = 0.00
 
-    kToleranceDegrees = 100.0
+    kToleranceDegrees = 2.0
 
     def robotInit(self):
-        # Channels for the wheels
-        frontLeftChannel = 2
-        rearLeftChannel = 3
-        frontRightChannel = 1
-        rearRightChannel = 0
+        # # Channels for the wheels
+        # frontLeftChannel = 2
+        # rearLeftChannel = 3
+        # frontRightChannel = 1
+        # rearRightChannel = 0
 
-        self.myRobot = wpilib.RobotDrive(
-            frontLeftChannel, rearLeftChannel, frontRightChannel, rearRightChannel
-        )
+        # self.myRobot = wpilib.RobotDrive(
+        #     frontLeftChannel, rearLeftChannel, frontRightChannel, rearRightChannel
+        # )
+
+        # Define Driving Motors
+        self.rightDrive = wpilib.VictorSP(0)
+        self.leftDrive = wpilib.VictorSP(1)
+
+        # Create Robot Drive
+        self.myRobot = wpilib.drive.DifferentialDrive(self.rightDrive, self.leftDrive)
+
         self.myRobot.setExpiration(0.1)
         self.stick = wpilib.Joystick(0)
 
@@ -70,8 +79,8 @@ class MyRobot(wpilib.SampleRobot):
         )
         turnController.setInputRange(-180.0, 180.0)
         turnController.setOutputRange(-0.5, 0.5)
-        # turnController.setAbsoluteTolerance(self.kToleranceDegrees)
-        turnController.setPercentTolerance(25)
+        turnController.setAbsoluteTolerance(self.kToleranceDegrees)
+        # turnController.setPercentTolerance(25)
         turnController.setContinuous(True)
 
         self.turnController = turnController
@@ -96,6 +105,8 @@ class MyRobot(wpilib.SampleRobot):
                 print("NavX Gyro", self.ahrs.getYaw(), self.ahrs.getAngle())
 
             self.turnController.setSetpoint(90.0)
+
+            print("set point = " +  str(self.turnController.getSetpoint()))
 
             if (self.turnController.onTarget() == False):
                 print("NOT ON TARGET:", self.kToleranceDegrees)
