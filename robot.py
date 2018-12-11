@@ -43,12 +43,12 @@ class MyRobot(wpilib.SampleRobot):
         kF = 0.00
     else:
         # These PID parameters are used on a real robot
-        kP = 0.1
-        kI = 0.0005
-        kD = 0.005
+        kP = 0.073
+        kI = 0.0
+        kD = 0.01725
         kF = 0.00
 
-    kToleranceDegrees = 3.0
+    kToleranceDegrees = 2.0
 
     def robotInit(self):
         # # Channels for the wheels
@@ -116,7 +116,7 @@ class MyRobot(wpilib.SampleRobot):
             print("ON TARGET:", self.kToleranceDegrees)
             self.turnController.disable()
 
-            wpilib.Timer.delay(0.05)  # wait for a motor update time
+            #wpilib.Timer.delay(0.05)  # wait for a motor update time
 
     def pidWrite(self, output):
         """This function is invoked periodically by the PID Controller,
