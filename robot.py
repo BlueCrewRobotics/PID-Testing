@@ -43,12 +43,12 @@ class MyRobot(wpilib.SampleRobot):
         kF = 0.00
     else:
         # These PID parameters are used on a real robot
-        kP = 0.30
-        kI = 0.00
-        kD = 0.00
+        kP = 0.1
+        kI = 0.0005
+        kD = 0.005
         kF = 0.00
 
-    kToleranceDegrees = 2.0
+    kToleranceDegrees = 3.0
 
     def robotInit(self):
         # # Channels for the wheels
@@ -97,8 +97,10 @@ class MyRobot(wpilib.SampleRobot):
         tm = wpilib.Timer()
         tm.start()
 
+
         self.myRobot.setSafetyEnabled(True)
 
+        self.ahrs.reset()
         while self.isOperatorControl() and self.isEnabled():
 
             if tm.hasPeriodPassed(1.0):
@@ -106,15 +108,13 @@ class MyRobot(wpilib.SampleRobot):
 
             self.turnController.setSetpoint(90.0)
 
-            print("set point = " +  str(self.turnController.getSetpoint()))
-
-            if (self.turnController.onTarget() == False):
+            while(self.turnController.onTarget() == False):
                 print("NOT ON TARGET:", self.kToleranceDegrees)
                 self.turnController.enable()
                 self.myRobot.arcadeDrive(self.stick.getY(), self.rotateToAngleRate)
-            else:
-                print("ON TARGET:", self.kToleranceDegrees)
-                self.turnController.disable()
+
+            print("ON TARGET:", self.kToleranceDegrees)
+            self.turnController.disable()
 
             wpilib.Timer.delay(0.05)  # wait for a motor update time
 
